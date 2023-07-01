@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/pi/edukit_bot_ws/install/setup.sh

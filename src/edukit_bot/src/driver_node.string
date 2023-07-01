@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+
+import rospy
+from std_msgs.msg import String
+
+import time  # Import the Time library
+from gpiozero import CamJamKitRobot  # Import the CamJam GPIO Zero Library
+
+robot = CamJamKitRobot()
+
+# Turn all motors off
+def StopMotors():
+    robot.stop()
+
+# Turn both motors forwards
+def Forwards():
+    robot.forward()
+
+# Turn both motors backwards
+def Backwards():
+    robot.backward()
+
+# Turn left
+def Left():
+    robot.left()
+
+# Turn Right
+def Right():
+    robot.right()
+
+# Message handler
+def CommandCallback(commandMessage):
+    command = commandMessage.data
+    if command == 'forwards':
+        print('Moving forwards')
+        Forwards()
+    elif command == 'backwards':
+        print('Moving backwards')
+        Backwards()
+    elif command == 'left':
+        print('Turning left')
+        Left()
+    elif command == 'right':
+        print('Turning right')
+        Right()
+    elif command == 'stop':
+        print('Stopping')
+        StopMotors()
+    else:
+        print('Unknown command, stopping instead')
+        StopMotors()
+
+rospy.init_node('driver')
+
+rospy.Subscriber('command', String, CommandCallback)
+
+rospy.spin()
+print('Shutting down: stopping motors')
+StopMotors()

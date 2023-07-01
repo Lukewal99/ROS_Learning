@@ -1,0 +1,8 @@
+prefix=/home/pi/edukit_bot_ws/devel
+
+Name: edukit_bot
+Description: Description of edukit_bot
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
