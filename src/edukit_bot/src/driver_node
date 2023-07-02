@@ -5,6 +5,7 @@ from geometry_msgs.msg import Twist
 
 import time  # Import the Time library
 from gpiozero import CamJamKitRobot  # Import the CamJam GPIO Zero Library
+from gpiozero import Robot, DigitalInputDevice
 
 def _clip(value, minimum, maximum):
     """Ensure value is between minimum and maximum."""
@@ -14,6 +15,21 @@ def _clip(value, minimum, maximum):
     elif value > maximum:
         return maximum
     return value
+
+class Encoder(object):
+    def __init__(self, pin):
+        self._value = 0
+        self.encoder = DigitalInputDevice(pin)
+        self.encoder.when_activated = self._increment
+        self.encoder.when_deactivated = self._increment
+    def reset(self):
+        self._value = 0
+    def _increment(self):
+        self._value += 1
+    @property
+    def value(self):
+        return self._value
+
 
 class Driver:
     def __init__(self):
@@ -25,6 +41,22 @@ class Driver:
         self._rate = rospy.get_param('~rate', 10)
         self._max_speed = rospy.get_param('~max_speed', 0.5)
         self._wheel_base = rospy.get_param('~wheel_base', 0.091)
+#TUNE BETTER
+        self.KP = 0.5
+        self.KD = 0.1
+        self.KI = 0.01
+
+        self._left_speed = 0
+        self._right_speed = 0
+
+        self.e1_prev_error = 0
+        self.e2_prev_error = 0
+
+        self.e1_sum_error = 0
+        self.e2_sum_error = 0
+        
+        self.e1 = Encoder(17)
+        self.e2 = Encoder(18)
 
         self._left_speed_percent = 0
         self._right_speed_percent = 0
@@ -66,20 +98,44 @@ class Driver:
             # moving
             delay = rospy.get_time() - self._last_received
 
-            _left_speed = _clip(abs(self._left_speed_percent), 0, 1)
-            _right_speed = _clip(abs(self._right_speed_percent), 0, 1)
+            _left_speed_target = _clip(abs(self._left_speed_percent), 0, 1)
+            _right_speed_target = _clip(abs(self._right_speed_percent), 0, 1)
 
+# calculated in terms of encoder ticks
+            e1_error = (_left_speed_target/0.1021) - self.e1.value
+            e2_error = (_right_speed_target/0.1021) - self.e2.value
+
+            self._left_speed += e1_error * self.KP + (self.e1_prev_error * self.KD) + (self.e1_sum_error * self.KI)
+            self._right_speed += e2_error * self.KP + (self.e2_prev_error * self.KD) + (self.e2_sum_error * self.KI)
+
+# converted back into m/s from encoder ticks
+            self._left_speed = max(min(1, self._left_speed*0.1021), 0)
+            self._right_speed = max(min(1, self._right_speed*0.1021), 0)
+# ADD A CONDITION SO IF SPEED IS < 0.2 IT SETS SPEED TO 0.
             if delay < self._timeout:
                 if self._left_speed_percent > 0:
-                    self._robot.left_motor.forward(_left_speed)
+                    self._robot.left_motor.forward(self._left_speed)
                 else:
-                    self._robot.left_motor.backward(_left_speed)
+                    self._robot.left_motor.backward(self._left_speed)
                 if self._right_speed_percent > 0:
-                    self._robot.right_motor.forward(_right_speed)
+                    self._robot.right_motor.forward(self._right_speed)
                 else:
-                    self._robot.right_motor.backward(_right_speed)
+                    self._robot.right_motor.backward(self._right_speed)
             else:
                 self._robot.stop()
+
+            print("e1 {} e2 {}".format(self.e1.value, self.e2.value))
+            print("m1 {} m2 {}".format(self._left_speed, self._right_speed))
+
+            self.e1.reset()
+            self.e2.reset()
+
+            self.e1_prev_error = e1_error
+            self.e2_prev_error = e2_error
+
+            self.e1_sum_error += e1_error
+            self.e2_sum_error += e2_error
+
             rate.sleep()
 
 def main():
