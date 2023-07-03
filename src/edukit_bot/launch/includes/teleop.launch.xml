@@ -4,6 +4,6 @@
   </node>
 
   <node pkg="teleop_twist_joy" type="teleop_node" name="joystick_to_twist">
-    <param name="scale_angular" value="4" />
+    <param name="scale_angular" value="6" />
   </node>
 </launch>
