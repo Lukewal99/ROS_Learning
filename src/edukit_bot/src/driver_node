@@ -16,20 +16,6 @@ def _clip(value, minimum, maximum):
         return maximum
     return value
 
-class Encoder(object):
-    def __init__(self, pin):
-        self._value = 0
-        self.encoder = DigitalInputDevice(pin)
-        self.encoder.when_activated = self._increment
-        self.encoder.when_deactivated = self._increment
-    def reset(self):
-        self._value = 0
-    def _increment(self):
-        self._value += 1
-    @property
-    def value(self):
-        return self._value
-
 
 class Driver:
     def __init__(self):
@@ -38,9 +24,20 @@ class Driver:
 
         self._last_received = rospy.get_time()
         self._timeout = rospy.get_param('~timeout', 2)
-        self._rate = rospy.get_param('~rate', 10)
+        self._rate = rospy.get_param('~rate', 5)
         self._max_speed = rospy.get_param('~max_speed', 0.5)
-        self._wheel_base = rospy.get_param('~wheel_base', 0.091)
+        self._wheel_base = rospy.get_param('~wheel_base', 0.125)
+
+        self._left_encoder_value = 0
+        self._left_encoder = DigitalInputDevice(17)
+        self._left_encoder.when_activated = self._left_increment
+        self._left_encoder.when_deactivated = self._left_increment
+
+        self._right_encoder_value = 0
+        self._right_encoder = DigitalInputDevice(18)
+        self._right_encoder.when_activated = self._right_increment
+        self._right_encoder.when_deactivated = self._right_increment
+
 #TUNE BETTER
         self.KP = 0.5
         self.KD = 0.1
@@ -49,21 +46,39 @@ class Driver:
         self._left_speed = 0
         self._right_speed = 0
 
+        self._left_speed_target = 0
+        self._right_speed_target = 0
+
         self.e1_prev_error = 0
         self.e2_prev_error = 0
 
         self.e1_sum_error = 0
         self.e2_sum_error = 0
         
-        self.e1 = Encoder(17)
-        self.e2 = Encoder(18)
-
-        self._left_speed_percent = 0
-        self._right_speed_percent = 0
-
         # Setup subscriber for velocity twist message
         rospy.Subscriber(
             'cmd_vel', Twist, self.velocity_received_callback)
+
+    def _left_increment(self):
+        # need to decrement if motot is backwards
+        if self._left_speed > 0:
+            self._left_encoder_value += 1
+        else:
+            self._left_encoder_value -= 1
+
+    def reset(self):
+        self._left_encoder_value = 0
+        self._right_encoder_value = 0
+
+   
+    def _right_increment(self):
+        # need to decrement if motot is backwards
+        if self._right_speed > 0:
+            self._right_encoder_value += 1
+        else:
+            self._right_encoder_value -= 1
+
+
 
     def velocity_received_callback(self, message):
         """Handle new velocity command message."""
@@ -75,17 +90,9 @@ class Driver:
         angular = message.angular.z
 
         # Calculate wheel speeds in m/s
-        left_speed = linear - angular*self._wheel_base/2
-        right_speed = linear + angular*self._wheel_base/2
+        self._left_speed_target = linear + angular*self._wheel_base/2
+        self._right_speed_target = linear - angular*self._wheel_base/2
 
-        # Ideally we'd now use the desired wheel speeds along
-        # with data from wheel speed sensors to come up with the
-        # power we need to apply to the wheels, but we don't have
-        # wheel speed sensors. Instead, we'll simply convert m/s
-        # into percent of maximum wheel speed, which gives us a
-        # duty cycle that we can apply to each motor.
-        self._left_speed_percent = (left_speed/self._max_speed)
-        self._right_speed_percent = (right_speed/self._max_speed)
 
     def run(self):
         """The control loop of the driver."""
@@ -98,37 +105,39 @@ class Driver:
             # moving
             delay = rospy.get_time() - self._last_received
 
-            _left_speed_target = _clip(abs(self._left_speed_percent), 0, 1)
-            _right_speed_target = _clip(abs(self._right_speed_percent), 0, 1)
-
-# calculated in terms of encoder ticks
-            e1_error = (_left_speed_target/0.1021) - self.e1.value
-            e2_error = (_right_speed_target/0.1021) - self.e2.value
+            left_speed_actual = self._left_encoder_value*0.005625*self._rate
+            right_speed_actual = self._right_encoder_value*0.005625*self._rate
+            e1_error = self._left_speed_target - left_speed_actual 
+            e2_error = self._right_speed_target - right_speed_actual
 
             self._left_speed += e1_error * self.KP + (self.e1_prev_error * self.KD) + (self.e1_sum_error * self.KI)
             self._right_speed += e2_error * self.KP + (self.e2_prev_error * self.KD) + (self.e2_sum_error * self.KI)
 
-# converted back into m/s from encoder ticks
-            self._left_speed = max(min(1, self._left_speed*0.1021), 0)
-            self._right_speed = max(min(1, self._right_speed*0.1021), 0)
-# ADD A CONDITION SO IF SPEED IS < 0.2 IT SETS SPEED TO 0.
+            self._left_speed = max(min(1, self._left_speed), -1)
+            self._right_speed = max(min(1, self._right_speed), -1)
             if delay < self._timeout:
-                if self._left_speed_percent > 0:
-                    self._robot.left_motor.forward(self._left_speed)
+                if abs(self._left_speed) > 0.2:
+                    if self._left_speed > 0:
+                        self._robot.left_motor.forward(abs(self._left_speed))
+                    else:
+                        self._robot.left_motor.backward(abs(self._left_speed))
                 else:
-                    self._robot.left_motor.backward(self._left_speed)
-                if self._right_speed_percent > 0:
-                    self._robot.right_motor.forward(self._right_speed)
+                    self._robot.left_motor.stop()
+                if abs(self._right_speed) > 0.2:
+                    if self._right_speed > 0:
+                        self._robot.right_motor.forward(abs(self._right_speed))
+                    else:
+                        self._robot.right_motor.backward(abs(self._right_speed))
                 else:
-                    self._robot.right_motor.backward(self._right_speed)
+                    self._robot.right_motor.stop()
+
             else:
                 self._robot.stop()
 
-            print("e1 {} e2 {}".format(self.e1.value, self.e2.value))
-            print("m1 {} m2 {}".format(self._left_speed, self._right_speed))
+            print("L Target {: 0.2f} L Actual {: 0.2f} L Power {: 0.2f} L Encoder {: 0.2f} L Error {: 0.2f} L Prev_Error {: 0.2f} L Sum_Error {: 0.2f}".format(self._left_speed_target, left_speed_actual, self._left_speed, self._left_encoder_value, e1_error, self.e1_prev_error, self.e1_sum_error))
+            print("R Target {: 0.2f} R Actual {: 0.2f} R Power {: 0.2f} R Encoder {: 0.2f} R Error {: 0.2f} R Prev_Error {: 0.2f} R Sum_Error {: 0.2f}".format(self._right_speed_target, right_speed_actual, self._right_speed, self._right_encoder_value, e2_error, self.e2_prev_error, self.e2_sum_error))
 
-            self.e1.reset()
-            self.e2.reset()
+            self.reset()
 
             self.e1_prev_error = e1_error
             self.e2_prev_error = e2_error
