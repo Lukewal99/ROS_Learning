@@ -1,2 +1,2 @@
-edukit_bot
+bringup:edukit_bot:rplidar_ros
 -DCATKIN_DEVEL_PREFIX=/home/pi/edukit_bot_ws/devel -DCMAKE_INSTALL_PREFIX=/home/pi/edukit_bot_ws/install -G Unix Makefiles

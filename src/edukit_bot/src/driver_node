@@ -29,12 +29,12 @@ class Driver:
         self._wheel_base = rospy.get_param('~wheel_base', 0.125)
 
         self._left_encoder_value = 0
-        self._left_encoder = DigitalInputDevice(17)
+        self._left_encoder = DigitalInputDevice(18)
         self._left_encoder.when_activated = self._left_increment
         self._left_encoder.when_deactivated = self._left_increment
 
         self._right_encoder_value = 0
-        self._right_encoder = DigitalInputDevice(18)
+        self._right_encoder = DigitalInputDevice(17)
         self._right_encoder.when_activated = self._right_increment
         self._right_encoder.when_deactivated = self._right_increment
 

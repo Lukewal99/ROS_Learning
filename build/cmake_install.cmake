@@ -131,7 +131,9 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/home/pi/edukit_bot_ws/build/gtest/cmake_install.cmake")
+  include("/home/pi/edukit_bot_ws/build/bringup/cmake_install.cmake")
   include("/home/pi/edukit_bot_ws/build/edukit_bot/cmake_install.cmake")
+  include("/home/pi/edukit_bot_ws/build/rplidar_ros/cmake_install.cmake")
 
 endif()
 

@@ -1,0 +1,4 @@
+<launch>
+  <include file="$(find edukit_bot)/launch/edukit_bot.launch" />
+  <include file="$(find rplidar_ros)/launch/rplidar_a1.launch" />
+</launch>

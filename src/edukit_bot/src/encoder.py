@@ -22,8 +22,8 @@ class Encoder(object):
 
 robot = CamJamKitRobot()
 
-e1 = Encoder(17)
-e2 = Encoder(18)
+e1 = Encoder(18)
+e2 = Encoder(17)
 
 m1_speed = 0
 m2_speed = 0
