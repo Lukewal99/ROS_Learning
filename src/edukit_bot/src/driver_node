@@ -41,9 +41,9 @@ class Driver:
         self._right_encoder.when_deactivated = self._right_increment
 
 #TUNE BETTER
-        self.KP = 0.5
-        self.KD = 0.1
-        self.KI = 0.01
+        self.KP = 0.06
+        self.KD = 0
+        self.KI = 0
 
         self._left_speed = 0
         self._right_speed = 0
@@ -123,14 +123,14 @@ class Driver:
             # moving
             delay = rospy.get_time() - self._last_received
             if delay < self._timeout:
-                if abs(self._left_speed) > 0.2:
+                if abs(self._left_speed) > 0.15:
                     if self._left_speed > 0:
                         self._robot.left_motor.forward(abs(self._left_speed))
                     else:
                         self._robot.left_motor.backward(abs(self._left_speed))
                 else:
                     self._robot.left_motor.stop()
-                if abs(self._right_speed) > 0.2:
+                if abs(self._right_speed) > 0.15:
                     if self._right_speed > 0:
                         self._robot.right_motor.forward(abs(self._right_speed))
                     else:
