@@ -13,10 +13,6 @@ rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/arch/linux/net_socket.cpp.o: /hom
 rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/arch/linux/net_socket.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/rplidar_driver.h
 rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/arch/linux/net_socket.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/rplidar_protocol.h
 rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/arch/linux/net_socket.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/rptypes.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/arch/linux/net_socket.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_lidar_cmd.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/arch/linux/net_socket.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_lidar_driver.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/arch/linux/net_socket.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_lidar_protocol.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/arch/linux/net_socket.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_types.h
 rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/arch/linux/net_socket.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/arch/linux/arch_linux.h
 rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/arch/linux/net_socket.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/arch/linux/net_socket.cpp
 rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/arch/linux/net_socket.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/arch/macOS/arch_macOS.h
@@ -39,10 +35,6 @@ rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/hal/thread.cpp.o: /home/pi/edukit
 rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/hal/thread.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/rplidar_driver.h
 rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/hal/thread.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/rplidar_protocol.h
 rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/hal/thread.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/rptypes.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/hal/thread.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_lidar_cmd.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/hal/thread.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_lidar_driver.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/hal/thread.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_lidar_protocol.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/hal/thread.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_types.h
 rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/hal/thread.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/arch/linux/arch_linux.h
 rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/hal/thread.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/arch/linux/thread.hpp
 rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/hal/thread.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/arch/macOS/arch_macOS.h
@@ -84,64 +76,10 @@ rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/rplidar_driver.cpp.o: /home/pi/ed
 rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/rplidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/rplidar_driver.cpp
 rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/rplidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/sdkcommon.h
 
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_crc.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_crc.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_crc.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_lidar_cmd.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_crc.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_lidar_protocol.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_crc.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_types.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_crc.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/sl_crc.cpp
 
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_lidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/rplidar.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_lidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/rplidar_cmd.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_lidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/rplidar_driver.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_lidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/rplidar_protocol.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_lidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/rptypes.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_lidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_crc.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_lidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_lidar_cmd.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_lidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_lidar_driver.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_lidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_lidar_protocol.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_lidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_types.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_lidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/arch/linux/arch_linux.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_lidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/arch/macOS/arch_macOS.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_lidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/arch/macOS/timer.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_lidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/arch/win32/arch_win32.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_lidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/arch/win32/timer.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_lidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/hal/abs_rxtx.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_lidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/hal/assert.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_lidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/hal/event.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_lidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/hal/locker.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_lidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/hal/socket.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_lidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/hal/thread.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_lidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/hal/types.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_lidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/hal/util.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_lidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/sdkcommon.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_lidar_driver.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/sl_lidar_driver.cpp
 
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_serial_channel.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_lidar_cmd.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_serial_channel.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_lidar_driver.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_serial_channel.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_lidar_protocol.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_serial_channel.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_types.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_serial_channel.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/hal/abs_rxtx.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_serial_channel.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/hal/socket.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_serial_channel.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/hal/types.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_serial_channel.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/sl_serial_channel.cpp
 
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_tcp_channel.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_lidar_cmd.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_tcp_channel.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_lidar_driver.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_tcp_channel.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_lidar_protocol.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_tcp_channel.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_types.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_tcp_channel.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/hal/abs_rxtx.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_tcp_channel.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/hal/socket.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_tcp_channel.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/hal/types.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_tcp_channel.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/sl_tcp_channel.cpp
 
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_udp_channel.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_lidar_cmd.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_udp_channel.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_lidar_driver.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_udp_channel.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_lidar_protocol.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_udp_channel.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_types.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_udp_channel.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/hal/abs_rxtx.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_udp_channel.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/hal/socket.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_udp_channel.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/hal/types.h
-rplidar_ros/CMakeFiles/rplidarNode.dir/sdk/src/sl_udp_channel.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/src/sl_udp_channel.cpp
 
 rplidar_ros/CMakeFiles/rplidarNode.dir/src/node.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_lidar.h
 rplidar_ros/CMakeFiles/rplidarNode.dir/src/node.cpp.o: /home/pi/edukit_bot_ws/src/rplidar_ros/sdk/include/sl_lidar_cmd.h

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 import rospy
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, Pose
+from std_msgs.msg import Int32
 
 import time  # Import the Time library
 from gpiozero import CamJamKitRobot  # Import the CamJam GPIO Zero Library
@@ -20,13 +21,14 @@ def _clip(value, minimum, maximum):
 class Driver:
     def __init__(self):
         rospy.init_node('driver')
-        self._robot = CamJamKitRobot()
 
         self._last_received = rospy.get_time()
         self._timeout = rospy.get_param('~timeout', 2)
         self._rate = rospy.get_param('~rate', 5)
         self._max_speed = rospy.get_param('~max_speed', 0.5)
         self._wheel_base = rospy.get_param('~wheel_base', 0.125)
+
+        self._robot = CamJamKitRobot()
 
         self._left_encoder_value = 0
         self._left_encoder = DigitalInputDevice(18)
@@ -58,6 +60,11 @@ class Driver:
         # Setup subscriber for velocity twist message
         rospy.Subscriber(
             'cmd_vel', Twist, self.velocity_received_callback)
+        
+        self.leftPub = rospy.Publisher('~lwheel_ticks',
+                                       Int32, queue_size=10)
+        self.rightPub = rospy.Publisher('~rwheel_ticks',
+                                        Int32, queue_size=10)
 
     def _left_increment(self):
         # need to decrement if motot is backwards
@@ -69,7 +76,6 @@ class Driver:
     def reset(self):
         self._left_encoder_value = 0
         self._right_encoder_value = 0
-
    
     def _right_increment(self):
         # need to decrement if motot is backwards
@@ -77,8 +83,6 @@ class Driver:
             self._right_encoder_value += 1
         else:
             self._right_encoder_value -= 1
-
-
 
     def velocity_received_callback(self, message):
         """Handle new velocity command message."""
@@ -99,12 +103,10 @@ class Driver:
 
         rate = rospy.Rate(self._rate)
 
-        while not rospy.is_shutdown():
-            # If we haven't received new commands for a while, we
-            # may have lost contact with the commander-- stop
-            # moving
-            delay = rospy.get_time() - self._last_received
+        self.nodeName = rospy.get_name()
+        rospy.loginfo("{0} started".format(self.nodeName))
 
+        while not rospy.is_shutdown():
             left_speed_actual = self._left_encoder_value*0.005625*self._rate
             right_speed_actual = self._right_encoder_value*0.005625*self._rate
             e1_error = self._left_speed_target - left_speed_actual 
@@ -115,6 +117,11 @@ class Driver:
 
             self._left_speed = max(min(1, self._left_speed), -1)
             self._right_speed = max(min(1, self._right_speed), -1)
+
+            # If we haven't received new commands for a while, we
+            # may have lost contact with the commander-- stop
+            # moving
+            delay = rospy.get_time() - self._last_received
             if delay < self._timeout:
                 if abs(self._left_speed) > 0.2:
                     if self._left_speed > 0:
@@ -134,6 +141,9 @@ class Driver:
             else:
                 self._robot.stop()
 
+            self.leftPub.publish(self._left_encoder_value)
+            self.rightPub.publish(self._right_encoder_value)
+
             print("L Target {: 0.2f} L Actual {: 0.2f} L Power {: 0.2f} L Encoder {: 0.2f} L Error {: 0.2f} L Prev_Error {: 0.2f} L Sum_Error {: 0.2f}".format(self._left_speed_target, left_speed_actual, self._left_speed, self._left_encoder_value, e1_error, self.e1_prev_error, self.e1_sum_error))
             print("R Target {: 0.2f} R Actual {: 0.2f} R Power {: 0.2f} R Encoder {: 0.2f} R Error {: 0.2f} R Prev_Error {: 0.2f} R Sum_Error {: 0.2f}".format(self._right_speed_target, right_speed_actual, self._right_speed, self._right_encoder_value, e2_error, self.e2_prev_error, self.e2_sum_error))
 
@@ -146,6 +156,7 @@ class Driver:
             self.e2_sum_error += e2_error
 
             rate.sleep()
+
 
 def main():
     driver = Driver()
