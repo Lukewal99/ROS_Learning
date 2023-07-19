@@ -9,53 +9,112 @@ from std_msgs.msg import Int32
 
 import time  # Import the Time library
 from math import sin, cos, pi
-class DiffTf:
+class OdomPub:
     def __init__(self):
         #initialise
+        rospy.init_node("odompub")
+        self.nodename = rospy.get_name()
+        rospy.loginfo("-I- %s started" % self.nodename)
+
         self.rate = rospy.get_param('~rate',5)
+        self.base_width = float(rospy.get_param('~base_width', 0.125)) # The wheel base width in meters
+        self.base_frame_id = rospy.get_param('~base_frame_id','base_link') # the name of the base frame of the robot
+        self.odom_frame_id = rospy.get_param('~odom_frame_id', 'odom') # the name of the odometry reference frame
 
         self.left = 0
         self.right = 0
-        self.left_used = true
-        self.right_used = true
-
+        self.left_used = True
+        self.right_used = True
+        self.ticksToDistance = 0.005625
+        self.x = 0
+        self.y = 0
+        self.th = 0
+        self.dt = 1/self.rate
+        self.d = 0
+        self.dx = 0
+        self.dr = 0
         #subscriptions
-        rospy.Subscriber("~lwheel_ticks", Int32, self.lwheelCallback)
-        rospy.Subscriber("~rwheel_ticks", Int32, self.rwheelCallback)
+        rospy.Subscriber("/driver/lwheel_ticks", Int32, self.lwheelCallback)
+        rospy.Subscriber("/driver/rwheel_ticks", Int32, self.rwheelCallback)
         self.odomPub = rospy.Publisher("odom", Odometry, queue_size=10)
         self.odomBroadcaster = TransformBroadcaster()
 
-    def spin():
+    def spin(self):
        # As soon as we get new L and R values process them
        r = rospy.Rate(self.rate * 10)
        while not rospy.is_shutdown():
            self.update()
            r.sleep() 
    
-    def update():
+    def update(self):
        
         # If left unused and right unused
-            #mark as used
+        if(self.left_used == False and self.right_used == False):
+            rospy.logdebug("Processing L and R")
+            self.left_used = True
+            self.right_used = True
             #calcs
+            d_left = self.left * self.ticksToDistance
+            d_right = self.right * self.ticksToDistance
+            # distance traveled is the average of the two wheels 
+            d = ( d_left + d_right ) / 2
+            # this approximation works (in radians) for small angles
+            th = ( d_right - d_left ) / self.base_width
+            # calculate velocities
+            self.dx = d / self.dt
+            self.dr = th / self.dt
+            # calculate distance traveled in x and y
+            x = cos( th ) * d
+            y = -sin( th ) * d
+            # calculate the final position of the robot
+            self.x = self.x + ( cos( self.th ) * x - sin( self.th ) * y )
+            self.y = self.y + ( sin( self.th ) * x + cos( self.th ) * y )
+            self.th = self.th + th
             #publish
-
+            quaternion = Quaternion()
+            quaternion.x = 0.0
+            quaternion.y = 0.0
+            quaternion.z = sin( self.th / 2 )
+            quaternion.w = cos( self.th / 2 )
+            self.odomBroadcaster.sendTransform(
+                (self.x, self.y, 0),
+                (quaternion.x, quaternion.y, quaternion.z, quaternion.w),
+                rospy.Time.now(),
+                self.base_frame_id,
+                self.odom_frame_id
+                )
+            
+            odom = Odometry()
+            odom.header.stamp = rospy.Time.now()
+            odom.header.frame_id = self.odom_frame_id
+            odom.pose.pose.position.x = self.x
+            odom.pose.pose.position.y = self.y
+            odom.pose.pose.position.z = 0
+            odom.pose.pose.orientation = quaternion
+            odom.child_frame_id = self.base_frame_id
+            odom.twist.twist.linear.x = self.dx
+            odom.twist.twist.linear.y = 0
+            odom.twist.twist.angular.z = self.dr
+            self.odomPub.publish(odom)
 
     def lwheelCallback(self, msg):
+        rospy.logdebug("Got Left Tick")
         self.left = msg.data
-        if (self.left_used = false): 
-          # log error
+        if (self.left_used == False): 
+            rospy.logerr("Left encoder value not used")
         else:
-          self.left_used = false
+          self.left_used = False
 
     def rwheelCallback(self, msg):
+        rospy.logdebug("Got Right Tick")
         self.right = msg.data
-        if(self.right_used = false): 
-          # log error
+        if(self.right_used == False): 
+            rospy.logerr("Right encoder value not used")
         else:
-          self.right_used = false
+          self.right_used = False
 
 
 
- if(__name__ == '__main__'):
-    diffTf = DiffTf()
-    diffTF.spin()
+if(__name__ == '__main__'):
+    OdomPub = OdomPub()
+    OdomPub.spin()

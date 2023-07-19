@@ -21,6 +21,8 @@ def _clip(value, minimum, maximum):
 class Driver:
     def __init__(self):
         rospy.init_node('driver')
+        self.nodename = rospy.get_name()
+        rospy.loginfo("-I- %s started" % self.nodename)
 
         self._last_received = rospy.get_time()
         self._timeout = rospy.get_param('~timeout', 2)
