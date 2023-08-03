@@ -28,7 +28,7 @@ class Driver:
         self._timeout = rospy.get_param('~timeout', 2)
         self._rate = rospy.get_param('~rate', 5)
         self._max_speed = rospy.get_param('~max_speed', 0.5)
-        self._wheel_base = rospy.get_param('~wheel_base', 0.05)
+        self._wheel_base = rospy.get_param('~wheel_base', 0.25)
 
         self._robot = CamJamKitRobot()
 
@@ -43,9 +43,9 @@ class Driver:
         self._right_encoder.when_deactivated = self._right_increment
 
 #TUNE BETTER
-        self.KP = 1
-        self.KD = 0.3
-        self.KI = 0.05
+        self.KP = 0.8
+        self.KD = 0.5
+        self.KI = 0.075
 
         self._left_speed = 0
         self._right_speed = 0
