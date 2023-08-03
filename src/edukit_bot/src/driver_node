@@ -28,7 +28,7 @@ class Driver:
         self._timeout = rospy.get_param('~timeout', 2)
         self._rate = rospy.get_param('~rate', 5)
         self._max_speed = rospy.get_param('~max_speed', 0.5)
-        self._wheel_base = rospy.get_param('~wheel_base', 0.125)
+        self._wheel_base = rospy.get_param('~wheel_base', 0.05)
 
         self._robot = CamJamKitRobot()
 
@@ -44,7 +44,7 @@ class Driver:
 
 #TUNE BETTER
         self.KP = 1
-        self.KD = 0
+        self.KD = 0.3
         self.KI = 0.05
 
         self._left_speed = 0
