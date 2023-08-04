@@ -28,23 +28,23 @@ class Driver:
         self._timeout = rospy.get_param('~timeout', 2)
         self._rate = rospy.get_param('~rate', 5)
         self._max_speed = rospy.get_param('~max_speed', 0.5)
-        self._wheel_base = rospy.get_param('~wheel_base', 0.25)
+        self._wheel_base = rospy.get_param('~wheel_base', 0.155)
 
         self._robot = CamJamKitRobot()
 
         self._left_encoder_value = 0
-        self._left_encoder = DigitalInputDevice(18)
+        self._left_encoder = DigitalInputDevice(17)
         self._left_encoder.when_activated = self._left_increment
         self._left_encoder.when_deactivated = self._left_increment
 
         self._right_encoder_value = 0
-        self._right_encoder = DigitalInputDevice(17)
+        self._right_encoder = DigitalInputDevice(18)
         self._right_encoder.when_activated = self._right_increment
         self._right_encoder.when_deactivated = self._right_increment
 
 #TUNE BETTER
-        self.KP = 0.8
-        self.KD = 0.5
+        self.KP = 0.5
+        self.KD = 0.25
         self.KI = 0.075
 
         self._left_speed = 0
@@ -69,7 +69,7 @@ class Driver:
                                         Int32, queue_size=10)
 
     def _left_increment(self):
-        # need to decrement if motot is backwards
+        # need to decrement if motor is backwards
         if self._left_speed > 0:
             self._left_encoder_value += 1
         else:
@@ -80,7 +80,7 @@ class Driver:
         self._right_encoder_value = 0
    
     def _right_increment(self):
-        # need to decrement if motot is backwards
+        # need to decrement if motor is backwards
         if self._right_speed > 0:
             self._right_encoder_value += 1
         else:
@@ -96,8 +96,8 @@ class Driver:
         angular = message.angular.z
 
         # Calculate wheel speeds in m/s
-        self._left_speed_target = linear + angular*self._wheel_base/2
-        self._right_speed_target = linear - angular*self._wheel_base/2
+        self._left_speed_target = linear - angular*self._wheel_base/2
+        self._right_speed_target = linear + angular*self._wheel_base/2
 
 
     def run(self):
@@ -116,6 +116,9 @@ class Driver:
 
             self._left_speed += e1_error * self.KP + (self.e1_prev_error * self.KD) + (self.e1_sum_error * self.KI)
             self._right_speed += e2_error * self.KP + (self.e2_prev_error * self.KD) + (self.e2_sum_error * self.KI)
+#overide PID for testing
+            #self._left_speed = self._left_speed_target*4
+            #self._right_speed = self._right_speed_target*4
 
             self._left_speed = max(min(1, self._left_speed), -1)
             self._right_speed = max(min(1, self._right_speed), -1)

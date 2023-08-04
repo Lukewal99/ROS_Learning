@@ -17,7 +17,7 @@ class OdomPub:
         rospy.loginfo("-I- %s started" % self.nodename)
 
         self.rate = rospy.get_param('~rate',5)
-        self.base_width = float(rospy.get_param('~base_width', 0.125)) # The wheel base width in meters
+        self.base_width = float(rospy.get_param('~base_width', 0.15)) # The wheel base width in meters
         self.base_frame_id = rospy.get_param('~base_frame_id','base_link') # the name of the base frame of the robot
         self.odom_frame_id = rospy.get_param('~odom_frame_id', 'odom') # the name of the odometry reference frame
 
@@ -70,6 +70,12 @@ class OdomPub:
             self.x = self.x + ( cos( self.th ) * x - sin( self.th ) * y )
             self.y = self.y + ( sin( self.th ) * x + cos( self.th ) * y )
             self.th = self.th + th
+
+            print("Odom: enc_l {: 3.0f}, enc_r {: 3.0f}, d_l {: 0.2f}, d_r {: 0.2f}, d {: 0.2f}, th {: 0.2f}, " \
+                    "dt {:0.2f}, dx {: 0.2f}, dr {: 0.2f}".format(self.left, self.right, d_left, d_right, d, th, \
+                    self.dt, self.dx, self.dr))               
+            print("Odom: x {: 0.2f}, y {: 0.2f}, self.x {: 0.2f}, self.y {: 0.2f}, self.th {: 0.2f}" \
+                    .format(x, y, self.x, self.y, self.th))
             #publish
             quaternion = Quaternion()
             quaternion.x = 0.0
