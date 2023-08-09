@@ -16,8 +16,8 @@ class OdomPub:
         self.nodename = rospy.get_name()
         rospy.loginfo("-I- %s started" % self.nodename)
 
-        self.rate = rospy.get_param('~rate',5)
-        self.base_width = float(rospy.get_param('~base_width', 0.15)) # The wheel base width in meters
+        self.rate = rospy.get_param('~rate',10)
+        self.base_width = float(rospy.get_param('~base_width', 0.12275)) # The wheel base width in meters
         self.base_frame_id = rospy.get_param('~base_frame_id','base_link') # the name of the base frame of the robot
         self.odom_frame_id = rospy.get_param('~odom_frame_id', 'odom') # the name of the odometry reference frame
 
@@ -25,7 +25,7 @@ class OdomPub:
         self.right = 0
         self.left_used = True
         self.right_used = True
-        self.ticksToDistance = 0.005625
+        self.metre_per_tick = 0.000047
         self.x = 0
         self.y = 0
         self.th = 0
@@ -36,7 +36,7 @@ class OdomPub:
         #subscriptions
         rospy.Subscriber("/driver/lwheel_ticks", Int32, self.lwheelCallback)
         rospy.Subscriber("/driver/rwheel_ticks", Int32, self.rwheelCallback)
-        self.odomPub = rospy.Publisher("odom", Odometry, queue_size=10)
+        self.odomPub = rospy.Publisher("odom", Odometry, queue_size=20)
         self.odomBroadcaster = TransformBroadcaster()
 
     def spin(self):
@@ -54,8 +54,8 @@ class OdomPub:
             self.left_used = True
             self.right_used = True
             #calcs
-            d_left = self.left * self.ticksToDistance
-            d_right = self.right * self.ticksToDistance
+            d_left = self.left * self.metre_per_tick
+            d_right = self.right * self.metre_per_tick
             # distance traveled is the average of the two wheels 
             d = ( d_left + d_right ) / 2
             # this approximation works (in radians) for small angles

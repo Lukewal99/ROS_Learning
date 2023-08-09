@@ -1,6 +1,5 @@
 <launch>
-  <include file="$(find edukit_bot)/launch/edukit_bot.launch" />
-  <include file="$(find rplidar_ros)/launch/rplidar_a1.launch" />
+  <include file="$(find bringup)/launch/common.launch"/>  
 
   <node pkg="hector_mapping" type="hector_mapping" name="hector_mapping" output="screen">
     <param name="map_update_angle_thresh" value="12.566"/>

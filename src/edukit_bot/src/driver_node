@@ -151,8 +151,8 @@ class Driver:
             else:
                 self._robot.stop()
 
-            print("L Target {: 0.3f}, L Actual {: 0.3f}, L Power {: 0.2f}, L Enc {: 4.0f}, L Err {: 0.3f}, L PrevErr {: 0.3f}, L SumErr {: 0.2f}".format(self._left_speed_target, left_speed_actual, self._left_speed, left_encoder_steps, l_error, self.l_prev_error, self.l_sum_error))
-            print("R Target {: 0.3f}, R Actual {: 0.3f}, R Power {: 0.2f}, R Enc {: 4.0f}, R Err {: 0.3f}, R PrevErr {: 0.3f}, R SumErr {: 0.2f}".format(self._right_speed_target, right_speed_actual, self._right_speed, right_encoder_steps, r_error, self.r_prev_error, self.r_sum_error))
+            rospy.logdebug("L Target {: 0.3f}, L Actual {: 0.3f}, L Power {: 0.2f}, L Enc {: 4.0f}, L Err {: 0.3f}, L PrevErr {: 0.3f}, L SumErr {: 0.2f}".format(self._left_speed_target, left_speed_actual, self._left_speed, left_encoder_steps, l_error, self.l_prev_error, self.l_sum_error))
+            rospy.logdebug("R Target {: 0.3f}, R Actual {: 0.3f}, R Power {: 0.2f}, R Enc {: 4.0f}, R Err {: 0.3f}, R PrevErr {: 0.3f}, R SumErr {: 0.2f}".format(self._right_speed_target, right_speed_actual, self._right_speed, right_encoder_steps, r_error, self.r_prev_error, self.r_sum_error))
 
             self.l_prev_error = l_error
             self.r_prev_error = r_error
