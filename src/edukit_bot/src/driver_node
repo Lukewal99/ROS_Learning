@@ -26,7 +26,7 @@ class Driver:
 
         self._last_received = rospy.get_time()
         self._timeout = rospy.get_param('~timeout', 2)
-        self._rate = rospy.get_param('~rate', 5)
+        self._rate = rospy.get_param('~rate', 10)
         self._max_speed = rospy.get_param('~max_speed', 0.5)
         self._wheel_base = rospy.get_param('~wheel_base', 0.155)
 
@@ -36,13 +36,13 @@ class Driver:
         self._right_encoder = RotaryEncoder(22,23,max_steps=0)
 
 #TUNE BETTER
-        self.KP = 0.25
-        self.KD = 0.125
-        self.KI = 0.0375
+        self.KP = 5
+        self.KD = 0.25
+        self.KI = 0.75
 
         self._left_speed = 0
         self._right_speed = 0
-
+        self.metre_per_tick = 0.000047
         self._left_speed_target = 0
         self._right_speed_target = 0
 
@@ -84,23 +84,36 @@ class Driver:
         rospy.loginfo("{0} started".format(self.nodeName))
 
         while not rospy.is_shutdown():
-            left_speed_actual = self._left_encoder.steps*0.005625*self._rate
-            right_speed_actual = self._right_encoder.steps*0.005625*self._rate
+            # Take a working copy of encoder.steps
+            left_encoder_steps = self._left_encoder.steps
+            right_encoder_steps = self._right_encoder.steps
+
+            # Reset encoder steps
+            self._left_encoder.steps = 0
+            self._right_encoder.steps = 0
+
+            # Publish encoder steps
+            self.leftPub.publish(left_encoder_steps)
+            self.rightPub.publish(right_encoder_steps)
+
+            # Calculate actual speeds and errors
+            left_speed_actual = left_encoder_steps * self.metre_per_tick * self._rate
+            right_speed_actual = right_encoder_steps * self.metre_per_tick * self._rate
             l_error = self._left_speed_target - left_speed_actual 
             r_error = self._right_speed_target - right_speed_actual
 
             self._left_speed += l_error * self.KP + (self.l_prev_error * self.KD) + (self.l_sum_error * self.KI)
             self._right_speed += r_error * self.KP + (self.r_prev_error * self.KD) + (self.r_sum_error * self.KI)
+
 #overide PID for testing
-            self._left_speed = self._left_speed_target*4
-            self._right_speed = self._right_speed_target*4
+            #self._left_speed = self._left_speed_target*4
+            #self._right_speed = self._right_speed_target*4
 
             self._left_speed = max(min(1, self._left_speed), -1)
             self._right_speed = max(min(1, self._right_speed), -1)
 
             # If we haven't received new commands for a while, we
-            # may have lost contact with the commander-- stop
-            # moving
+            # may have lost contact so stop moving
             delay = rospy.get_time() - self._last_received
             if delay < self._timeout:
                 if (abs(self._left_speed) > 0.15) and (self._left_speed_target != 0):
@@ -138,14 +151,8 @@ class Driver:
             else:
                 self._robot.stop()
 
-            self.leftPub.publish(self._left_encoder.steps)
-            self.rightPub.publish(self._right_encoder.steps)
-
-            print("L Target {: 0.2f} L Actual {: 0.2f} L Power {: 0.2f} L Encoder {: 0.2f} L Error {: 0.2f} L Prev_Error {: 0.2f} L Sum_Error {: 0.2f}".format(self._left_speed_target, left_speed_actual, self._left_speed, self._left_encoder.steps, l_error, self.l_prev_error, self.l_sum_error))
-            print("R Target {: 0.2f} R Actual {: 0.2f} R Power {: 0.2f} R Encoder {: 0.2f} R Error {: 0.2f} R Prev_Error {: 0.2f} R Sum_Error {: 0.2f}".format(self._right_speed_target, right_speed_actual, self._right_speed, self._right_encoder.steps, r_error, self.r_prev_error, self.r_sum_error))
-
-            self._left_encoder.steps = 0
-            self._right_encoder.steps = 0
+            print("L Target {: 0.3f}, L Actual {: 0.3f}, L Power {: 0.2f}, L Enc {: 4.0f}, L Err {: 0.3f}, L PrevErr {: 0.3f}, L SumErr {: 0.2f}".format(self._left_speed_target, left_speed_actual, self._left_speed, left_encoder_steps, l_error, self.l_prev_error, self.l_sum_error))
+            print("R Target {: 0.3f}, R Actual {: 0.3f}, R Power {: 0.2f}, R Enc {: 4.0f}, R Err {: 0.3f}, R PrevErr {: 0.3f}, R SumErr {: 0.2f}".format(self._right_speed_target, right_speed_actual, self._right_speed, right_encoder_steps, r_error, self.r_prev_error, self.r_sum_error))
 
             self.l_prev_error = l_error
             self.r_prev_error = r_error
