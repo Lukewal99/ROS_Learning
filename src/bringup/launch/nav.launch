@@ -1,0 +1,18 @@
+<launch>
+  <include file="$(find bringup)/launch/common.launch"/>  
+  <node name="odom" pkg="edukit_bot" type="odom_node" />
+
+ <!-- Run the map server --> 
+
+ <!--- Run AMCL -->
+
+
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <rosparam file="$(find bringup)/launch/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
+    <rosparam file="$(find bringup)/launch/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find bringup)/launch/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find bringup)/launch/global_costmap_params.yaml" command="load" /> 
+    <rosparam file="$(find bringup)/launch/base_local_planner_params.yaml" command="load" />
+  </node>
+ 
+</launch>
