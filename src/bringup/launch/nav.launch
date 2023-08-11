@@ -2,10 +2,10 @@
   <include file="$(find bringup)/launch/common.launch"/>  
   <node name="odom" pkg="edukit_bot" type="odom_node" />
 
- <!-- Run the map server --> 
-
- <!--- Run AMCL -->
-
+  <!-- Run the map server --> 
+  <node name="map_server" pkg="map_server" type="map_server" args="/home/pi/edukit_bot_ws/src/loft_map_3.yaml"/>
+  <!--- Run AMCL -->
+  <include file="$(find amcl)/examples/amcl_diff.launch"/>
 
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
     <rosparam file="$(find bringup)/launch/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
