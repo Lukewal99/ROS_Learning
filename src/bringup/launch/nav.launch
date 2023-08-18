@@ -14,5 +14,12 @@
     <rosparam file="$(find bringup)/launch/global_costmap_params.yaml" command="load" /> 
     <rosparam file="$(find bringup)/launch/base_local_planner_params.yaml" command="load" />
   </node>
+  
+  <node pkg="explore_lite" type="explore" name="explore" output="screen">
+    <param name="visualize" value="true"/>
+    <param name="costmap_topic" value="move_base/global_costmap/costmap"/>
+    <param name="costmap_updates_topic" value="move_base/global_costmap/costmap_updates"/>
+    <param name="min_frontier_size" value="0.05"/>
+  </node>
  
 </launch>

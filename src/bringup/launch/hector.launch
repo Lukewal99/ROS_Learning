@@ -1,3 +1,4 @@
+<!-- Create Map Using Hector Mapping -->
 <launch>
   <include file="$(find bringup)/launch/common.launch"/>  
 
