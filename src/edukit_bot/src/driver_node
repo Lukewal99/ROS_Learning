@@ -129,9 +129,9 @@ class Driver:
                         self.l_prev_error = 0
                         self.l_sum_error = 0
 
-                if(abs(self.l_sum_error) > abs(1000*self._left_speed)):
+                if(abs(self.l_sum_error) > abs(10*left_speed_actual)):
                     rospy.logwarn("Drastic l_sum_error. Could be a collision")
-                        
+ 
                 if (abs(self._right_speed) > 0.15) and (self._right_speed_target != 0):
                     if self._right_speed > 0:
                         self._robot.right_motor.forward(abs(self._right_speed))
@@ -145,7 +145,7 @@ class Driver:
                         self.r_prev_error = 0
                         self.r_sum_error = 0
 
-                if(abs(self.r_sum_error) > abs(1000*self._right_speed)):
+                if(abs(self.r_sum_error) > abs(10*right_speed_actual)):
                     rospy.logwarn("Drastic r_sum_error. Could be a collision")
  
             else:

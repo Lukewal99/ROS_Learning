@@ -6,16 +6,16 @@
     <param name="inverted"            type="bool"   value="false"/>
     <param name="angle_compensate"    type="bool"   value="true"/>
   </node>
-  <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser" args="0 0 0.115 0 0 0 base_link laser 30" />
+  <node pkg="tf" type="static_transform_publisher" name="static_base_link_to_laser" args="0 0 0.115 0 0 0 base_link laser 30" />
 
-  <node name="driver" pkg="edukit_bot" type="driver_node" />
+  <node name="driver" pkg="edukit_bot" type="driver_node" output="screen"/>
   
   <node pkg="joy" type="joy_node" name="joystick">
     <param name="autorepeat_rate" value="1" />
   </node>
 
   <node pkg="teleop_twist_joy" type="teleop_node" name="joystick_to_twist">
-    <param name="scale_linear" value="0.065" />
+    <param name="scale_linear" value="0.05" />
     <param name="scale_angular" value="0.45" />
   </node>
 </launch>
