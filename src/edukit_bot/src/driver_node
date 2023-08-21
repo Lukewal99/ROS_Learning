@@ -27,7 +27,7 @@ class Driver:
         self._last_received = rospy.get_time()
         self._timeout = rospy.get_param('~timeout', 2)
         self._rate = rospy.get_param('~rate', 10)
-        self._max_speed = rospy.get_param('~max_speed', 0.5)
+        self._max_speed = rospy.get_param('~max_speed', 0.06)
         self._wheel_base = rospy.get_param('~wheel_base', 0.155)
 
         self._robot = CamJamKitRobot()
@@ -40,8 +40,8 @@ class Driver:
         self.KD = 0.25
         self.KI = 0.75
 
-        self._left_speed = 0
-        self._right_speed = 0
+        self._left_motor_speed = 0
+        self._right_motor_speed = 0
         self.metre_per_tick = 0.000047
         self._left_speed_target = 0
         self._right_speed_target = 0
@@ -73,7 +73,9 @@ class Driver:
         # Calculate wheel speeds in m/s
         self._left_speed_target = linear - angular*self._wheel_base/2
         self._right_speed_target = linear + angular*self._wheel_base/2
-
+        if(abs(self._left_speed_target) > self._max_speed or abs(self._right_speed_target) > self._max_speed):
+            self._left_speed_target = self._max_speed * (self._left_speed_target / max(abs(self._left_speed_target),abs(self._right_speed_target)))
+            self._right_speed_target = self._max_speed * (self._right_speed_target / max(abs(self._right_speed_target),abs(self._right_speed_target)))
 
     def run(self):
         """The control loop of the driver."""
@@ -102,29 +104,29 @@ class Driver:
             l_error = self._left_speed_target - left_speed_actual 
             r_error = self._right_speed_target - right_speed_actual
 
-            self._left_speed += l_error * self.KP + (self.l_prev_error * self.KD) + (self.l_sum_error * self.KI)
-            self._right_speed += r_error * self.KP + (self.r_prev_error * self.KD) + (self.r_sum_error * self.KI)
+            self._left_motor_speed += l_error * self.KP + (self.l_prev_error * self.KD) + (self.l_sum_error * self.KI)
+            self._right_motor_speed += r_error * self.KP + (self.r_prev_error * self.KD) + (self.r_sum_error * self.KI)
 
 #overide PID for testing
-            #self._left_speed = self._left_speed_target*4
-            #self._right_speed = self._right_speed_target*4
+            #self._left_motor_speed = self._left_speed_target*4
+            #self._right_motor_speed = self._right_speed_target*4
 
-            self._left_speed = max(min(1, self._left_speed), -1)
-            self._right_speed = max(min(1, self._right_speed), -1)
+            self._left_motor_speed = max(min(1, self._left_motor_speed), -1)
+            self._right_motor_speed = max(min(1, self._right_motor_speed), -1)
 
             # If we haven't received new commands for a while, we
             # may have lost contact so stop moving
             delay = rospy.get_time() - self._last_received
             if delay < self._timeout:
-                if (abs(self._left_speed) > 0.15) and (self._left_speed_target != 0):
-                    if self._left_speed > 0:
-                        self._robot.left_motor.forward(abs(self._left_speed))
+                if (abs(self._left_motor_speed) > 0.15) and (self._left_speed_target != 0):
+                    if self._left_motor_speed > 0:
+                        self._robot.left_motor.forward(abs(self._left_motor_speed))
                     else:
-                        self._robot.left_motor.backward(abs(self._left_speed))
+                        self._robot.left_motor.backward(abs(self._left_motor_speed))
                 else:
                     self._robot.left_motor.stop()
                     if self._left_speed_target == 0:
-                        self._left_speed = 0
+                        self._left_motor_speed = 0
                         self.l_error = 0
                         self.l_prev_error = 0
                         self.l_sum_error = 0
@@ -132,15 +134,15 @@ class Driver:
                 if(abs(self.l_sum_error) > abs(10*left_speed_actual)):
                     rospy.logwarn("Drastic l_sum_error. Could be a collision")
  
-                if (abs(self._right_speed) > 0.15) and (self._right_speed_target != 0):
-                    if self._right_speed > 0:
-                        self._robot.right_motor.forward(abs(self._right_speed))
+                if (abs(self._right_motor_speed) > 0.15) and (self._right_speed_target != 0):
+                    if self._right_motor_speed > 0:
+                        self._robot.right_motor.forward(abs(self._right_motor_speed))
                     else:
-                        self._robot.right_motor.backward(abs(self._right_speed))
+                        self._robot.right_motor.backward(abs(self._right_motor_speed))
                 else:
                     self._robot.right_motor.stop()
                     if self._right_speed_target == 0:
-                        self._right_speed = 0
+                        self._right_motor_speed = 0
                         self.r_error = 0
                         self.r_prev_error = 0
                         self.r_sum_error = 0
@@ -151,8 +153,8 @@ class Driver:
             else:
                 self._robot.stop()
 
-            rospy.logdebug("L Target {: 0.3f}, L Actual {: 0.3f}, L Power {: 0.2f}, L Enc {: 4.0f}, L Err {: 0.3f}, L PrevErr {: 0.3f}, L SumErr {: 0.2f}".format(self._left_speed_target, left_speed_actual, self._left_speed, left_encoder_steps, l_error, self.l_prev_error, self.l_sum_error))
-            rospy.logdebug("R Target {: 0.3f}, R Actual {: 0.3f}, R Power {: 0.2f}, R Enc {: 4.0f}, R Err {: 0.3f}, R PrevErr {: 0.3f}, R SumErr {: 0.2f}".format(self._right_speed_target, right_speed_actual, self._right_speed, right_encoder_steps, r_error, self.r_prev_error, self.r_sum_error))
+            rospy.logdebug("L Target {: 0.3f}, L Actual {: 0.3f}, L Power {: 0.2f}, L Enc {: 4.0f}, L Err {: 0.3f}, L PrevErr {: 0.3f}, L SumErr {: 0.2f}".format(self._left_speed_target, left_speed_actual, self._left_motor_speed, left_encoder_steps, l_error, self.l_prev_error, self.l_sum_error))
+            rospy.logdebug("R Target {: 0.3f}, R Actual {: 0.3f}, R Power {: 0.2f}, R Enc {: 4.0f}, R Err {: 0.3f}, R PrevErr {: 0.3f}, R SumErr {: 0.2f}".format(self._right_speed_target, right_speed_actual, self._right_motor_speed, right_encoder_steps, r_error, self.r_prev_error, self.r_sum_error))
 
             self.l_prev_error = l_error
             self.r_prev_error = r_error
