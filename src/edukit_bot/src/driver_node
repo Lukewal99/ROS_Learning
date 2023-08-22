@@ -4,6 +4,7 @@ import rospy
 from geometry_msgs.msg import Twist, Pose
 from std_msgs.msg import Int32
 
+import math
 import time  # Import the Time library
 from gpiozero import CamJamKitRobot  # Import the CamJam GPIO Zero Library
 from gpiozero import Robot, RotaryEncoder
@@ -71,11 +72,20 @@ class Driver:
         angular = message.angular.z
 
         # Calculate wheel speeds in m/s
-        self._left_speed_target = linear - angular*self._wheel_base/2
-        self._right_speed_target = linear + angular*self._wheel_base/2
-        if(abs(self._left_speed_target) > self._max_speed or abs(self._right_speed_target) > self._max_speed):
-            self._left_speed_target = self._max_speed * (self._left_speed_target / max(abs(self._left_speed_target),abs(self._right_speed_target)))
-            self._right_speed_target = self._max_speed * (self._right_speed_target / max(abs(self._right_speed_target),abs(self._right_speed_target)))
+        left_speed_target_unscaled = linear - angular*self._wheel_base/2
+        right_speed_target_unscaled = linear + angular*self._wheel_base/2
+
+        # Scales both targets down if one of them is greater than maximum
+        #print("L Target {: 0.3f}, R Target {: 0.3f}".format(left_speed_target_unscaled, right_speed_target_unscaled))
+
+        if(abs(left_speed_target_unscaled) > self._max_speed or abs(right_speed_target_unscaled) > self._max_speed):
+            self._left_speed_target = self._max_speed * (left_speed_target_unscaled / max(abs(left_speed_target_unscaled),abs(right_speed_target_unscaled)))
+            self._right_speed_target = self._max_speed * (right_speed_target_unscaled / max(abs(left_speed_target_unscaled),abs(right_speed_target_unscaled)))
+            #print("Scaled L Target {: 0.3f}, Scaled R Target {: 0.3f}".format(self._left_speed_target, self._right_speed_target))
+        else:
+            self._left_speed_target = left_speed_target_unscaled
+            self._right_speed_target = right_speed_target_unscaled
+        #print()
 
     def run(self):
         """The control loop of the driver."""
@@ -131,7 +141,8 @@ class Driver:
                         self.l_prev_error = 0
                         self.l_sum_error = 0
 
-                if(abs(self.l_sum_error) > abs(10*left_speed_actual)):
+                if(abs(self.l_sum_error) > 0.1 + math.sqrt(abs(left_speed_actual))):
+                    #print("l sum error: {: 0.4f}, l_s_actual: {: 0.4f}, sqrt(l_s_actual): {: 0.4f},  2.5sqrt(l_s_actual): {: 0.4f}".format(self.l_sum_error, left_speed_actual, math.sqrt(abs(left_speed_actual)), 2.5*math.sqrt(abs(left_speed_actual))))
                     rospy.logwarn("Drastic l_sum_error. Could be a collision")
  
                 if (abs(self._right_motor_speed) > 0.15) and (self._right_speed_target != 0):
@@ -147,7 +158,8 @@ class Driver:
                         self.r_prev_error = 0
                         self.r_sum_error = 0
 
-                if(abs(self.r_sum_error) > abs(10*right_speed_actual)):
+                if(abs(self.r_sum_error) > 0.1 + math.sqrt(abs(right_speed_actual))):
+                    #print("r sum error: {: 0.4f}, r_s_actual: {: 0.4f}, sqrt(r_s_actual): {: 0.4f}, 2.5sqrt(r_s_actual): {: 0.4f}".format(self.r_sum_error, right_speed_actual, math.sqrt(abs(right_speed_actual)), 2.5*math.sqrt(abs(right_speed_actual))))
                     rospy.logwarn("Drastic r_sum_error. Could be a collision")
  
             else:
