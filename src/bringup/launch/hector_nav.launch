@@ -26,7 +26,7 @@
     <param name="visualize" value="true"/>
     <param name="costmap_topic" value="map"/>
     <param name="costmap_updates_topic" value="map_updates"/>
-    <param name="min_frontier_size" value="0.05"/>
+    <param name="min_frontier_size" value="0.75"/>
   </node>
  
 </launch>

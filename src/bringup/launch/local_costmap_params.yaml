@@ -5,9 +5,7 @@ local_costmap:
   publish_frequency: 2.0
   static_map: false
   rolling_window: true
-  width: 6.0
-  height: 6.0
+  width: 3.0
+  height: 3.0
   resolution: 0.025
-  observation_sources: laser_scan_sensor
-  laser_scan_sensor: {sensor_frame: laser, data_type: LaserScan, topic: scan, marking: true, clearing: true}
 
