@@ -1,9 +1,24 @@
+<?xml version="1.0"?>
+
 <launch>
   <include file="$(find bringup)/launch/common.launch"/>  
-  <node name="odom" pkg="edukit_bot" type="odom_node" />
 
   <!-- Run the map server --> 
   <node name="map_server" pkg="map_server" type="map_server" args="/home/pi/edukit_bot_ws/src/hall_map.yaml"/>
+
+
+  <remap from="scanmatch_odom" to="odom"/>
+  <node pkg="hector_mapping" type="hector_mapping" name="hector_mapping" output="screen">
+    <remap from="map" to="unused_map"/>
+    <remap from="map_metadata" to="unused_map_metadata"/>
+    <param name="map_update_angle_thresh" value="12.566"/>
+    <param name="map_frame" value="odom"/>
+    <param name="odom_frame" value="base_link"/>
+    <param name="pub_map_scanmatch_transform" value="false"/>
+    <param name="pub_odometry" value="true"/>
+    <param name="pub_map_odom_transform" value="true"/>
+    <param name="laser_max_dist" value="4"/>
+  </node>
 
   <!--- Run AMCL -->
   <include file="$(find bringup)/launch/amcl_diff.launch"/>
@@ -16,11 +31,11 @@
     <rosparam file="$(find bringup)/launch/base_local_planner_params.yaml" command="load" />
   </node>
   
-  <node pkg="explore_lite" type="explore" name="explore" output="screen">
+<!--  <node pkg="explore_lite" type="explore" name="explore" output="screen">
     <param name="visualize" value="true"/>
     <param name="costmap_topic" value="move_base/global_costmap/costmap"/>
     <param name="costmap_updates_topic" value="move_base/global_costmap/costmap_updates"/>
     <param name="min_frontier_size" value="0.05"/>
   </node>
- 
+ -->
 </launch>

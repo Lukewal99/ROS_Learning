@@ -15,7 +15,7 @@
   </node>
 
   <node pkg="teleop_twist_joy" type="teleop_node" name="joystick_to_twist">
-    <param name="scale_linear" value="0.06" />
-    <param name="scale_angular" value="0.45" />
+    <param name="scale_linear" value="0.04" />
+    <param name="scale_angular" value="0.2" />
   </node>
 </launch>
